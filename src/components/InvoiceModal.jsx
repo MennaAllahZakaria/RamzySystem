@@ -1,0 +1,5 @@
+import { ArrowLeft, BellRing, FilePlus2, X } from "lucide-react";
+
+export default function InvoiceModal({ onClose }) {
+  return <div className="modal-backdrop" onMouseDown={onClose}><div className="invoice-modal" onMouseDown={(event) => event.stopPropagation()}><div className="modal-header"><div><span className="eyebrow">إجراء سريع</span><h2>إنشاء فاتورة جديدة</h2></div><button className="close-button" onClick={onClose} aria-label="إغلاق"><X size={19} /></button></div><div className="invoice-choice-grid"><button><span className="choice-icon choice-sale"><FilePlus2 size={20} /></span><strong>فاتورة بيع</strong><small>للعملاء والمبيعات</small><ArrowLeft size={16} /></button><button><span className="choice-icon choice-purchase"><FilePlus2 size={20} /></span><strong>فاتورة شراء</strong><small>للموردين والمشتريات</small><ArrowLeft size={16} /></button></div><div className="modal-note"><BellRing size={16} /><span>يمكنك إضافة دفعة، خصم أو أكثر من منتج داخل الفاتورة.</span></div></div></div>;
+}
