@@ -1,0 +1,10 @@
+import { apiClient } from "./client";
+export const listExpenses = (query) => apiClient.get("/expenses", query);
+export const getExpense = (id) => apiClient.get(`/expenses/${id}`);
+export const createExpense = (payload) => apiClient.post("/expenses", payload);
+export const cancelExpense = (id) => apiClient.post(`/expenses/${id}/cancel`);
+export const listRevenues = (query) => apiClient.get("/revenues", query);
+export const getRevenue = (id) => apiClient.get(`/revenues/${id}`);
+export const createRevenue = (payload) => apiClient.post("/revenues", payload);
+export const listSettlements = (query) => apiClient.get("/settlements", query);
+export const createSettlement = (payload) => apiClient.post("/settlements", payload);

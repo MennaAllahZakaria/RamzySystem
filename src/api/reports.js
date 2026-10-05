@@ -1,0 +1,15 @@
+import { apiClient } from "./client";
+export const getProfitLoss = (query) => apiClient.get("/reports/profit-loss", query);
+export const getGrossProfit = (query) => apiClient.get("/reports/gross-profit", query);
+export const exportGrossProfit = (query) => apiClient.download("/reports/gross-profit/export", query);
+export const getSalesSummary = (query) => apiClient.get("/reports/sales-summary", query);
+export const getExpensesSummary = (query) => apiClient.get("/reports/expenses-summary", query);
+export const getAgingReport = (role, query) => apiClient.get(`/reports/aging/${role}`, query);
+export const getPayrollSummary = (query) => apiClient.get("/reports/payroll-summary", query);
+export const getQuotationsSummary = (query) => apiClient.get("/reports/quotations-summary", query);
+export const getBalanceSheet = (query) => apiClient.get("/reports/balance-sheet", query);
+export const getInventoryValue = (query) => apiClient.get("/reports/inventory-value", query);
+export const getNetInvoices = (query) => apiClient.get("/reports/net-invoices", query);
+export const getInvoiceMargins = (query) => apiClient.get("/reports/invoice-margins", query);
+export const getInventoryValuation = (query) => apiClient.get("/reports/inventory-valuation", query);
+export const getInvoiceCost = (id) => apiClient.get(`/reports/invoices/${id}/cost`);

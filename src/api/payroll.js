@@ -1,0 +1,9 @@
+import { apiClient } from "./client";
+export const listPayrollPayments = (query) => apiClient.get("/payroll/payments", query);
+export const listWithdrawals = (query) => apiClient.get("/payroll/withdrawals", query);
+export const createWithdrawal = (payload) => apiClient.post("/payroll/withdrawals", payload);
+export const calculateWorkerPayroll = (id, query) => apiClient.get(`/payroll/worker/${id}/calculate`, query);
+export const getWorkerStatement = (id, query) => apiClient.get(`/payroll/worker/${id}/statement`, query);
+export const calculateEmployeePayroll = (id, query) => apiClient.get(`/payroll/employee/${id}/calculate`, query);
+export const getEmployeeStatement = (id, query) => apiClient.get(`/payroll/employee/${id}/statement`, query);
+export const paySalary = (payload) => apiClient.post("/payroll/pay", payload);
