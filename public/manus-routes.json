@@ -1,0 +1,1 @@
+{"routes":[{"path":"/","title":"لوحة التحكم"},{"path":"/invoices","title":"الفواتير"},{"path":"/products","title":"المنتجات والمخزون"},{"path":"/parties","title":"العملاء والموردون"},{"path":"/reports","title":"التقارير المالية"},{"path":"/settings","title":"الإعدادات"}]}

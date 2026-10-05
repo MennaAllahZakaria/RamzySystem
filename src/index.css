@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  font-family: "IBM Plex Sans Arabic", "Cairo", sans-serif;
+  color: #182128;
+  background: #f7f9fa;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, input { font: inherit; }
+button { border: 0; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid rgba(224, 28, 36, .22); outline-offset: 2px; }
