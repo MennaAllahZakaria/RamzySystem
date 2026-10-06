@@ -1,4 +1,4 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1").replace(/\/$/, "");
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://ramzy-system-backend.vercel.app/api/v1").replace(/\/$/, "");
 export const authStorageKey = "ramzy_auth_token";
 export function getAuthToken() { return localStorage.getItem(authStorageKey); }
 export function setAuthToken(token) { if (token) localStorage.setItem(authStorageKey, token); else localStorage.removeItem(authStorageKey); }
