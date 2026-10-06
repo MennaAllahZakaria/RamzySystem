@@ -5,6 +5,9 @@ import InvoiceModal from "./components/InvoiceModal";
 import DashboardPage from "./pages/DashboardPage";
 import InvoicesPage from "./pages/InvoicesPage";
 import WarehousesPage from "./pages/WarehousesPage";
+import PartiesPage from "./pages/PartiesPage";
+import ProductsPage from "./pages/ProductsPage";
+import PurchasesPage from "./pages/PurchasesPage";
 import "./App.css";
 
 function PlaceholderPage({ title }) {
@@ -14,6 +17,6 @@ function PlaceholderPage({ title }) {
 export default function App() {
   const [activePage, setActivePage] = useState("لوحة التحكم");
   const [modalOpen, setModalOpen] = useState(false);
-  const content = activePage === "لوحة التحكم" ? <DashboardPage onCreateInvoice={() => setModalOpen(true)} /> : activePage === "الفواتير" ? <InvoicesPage /> : activePage === "المخازن" ? <WarehousesPage /> : <PlaceholderPage title={activePage} />;
+  const content = activePage === "لوحة التحكم" ? <DashboardPage onCreateInvoice={() => setModalOpen(true)} /> : activePage === "الفواتير" ? <InvoicesPage /> : activePage === "المخازن" ? <WarehousesPage /> : activePage === "العملاء والموردون" ? <PartiesPage /> : activePage === "المنتجات والمخزون" ? <ProductsPage /> : activePage === "المشتريات" ? <PurchasesPage /> : <PlaceholderPage title={activePage} />;
   return <AppShell activePage={activePage} onSelect={setActivePage}>{content}{modalOpen && <InvoiceModal onClose={() => setModalOpen(false)} />}</AppShell>;
 }
