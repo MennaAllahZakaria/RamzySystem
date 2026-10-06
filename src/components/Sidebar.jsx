@@ -6,6 +6,7 @@ import {
   ClipboardList,
   FileText,
   LayoutDashboard,
+  LogOut,
   Settings,
   ShoppingCart,
   Truck,
@@ -39,7 +40,7 @@ function NavItem({ item, onSelect }) {
   );
 }
 
-export default function Sidebar({ activePage, onSelect }) {
+export default function Sidebar({ activePage, onSelect, user, onLogout }) {
   return (
     <aside className="sidebar">
       <div className="brand-block">
@@ -73,10 +74,11 @@ export default function Sidebar({ activePage, onSelect }) {
           <button aria-label="فتح مركز الدعم">←</button>
         </div>
         <div className="user-mini">
-          <div className="user-avatar">م</div>
-          <div><strong>محمد رامزي</strong><span>مدير النظام</span></div>
+          <div className="user-avatar">{user?.name?.charAt(0) || "م"}</div>
+          <div><strong>{user?.name || "المستخدم"}</strong><span>{user?.role || "مستخدم النظام"}</span></div>
           <span className="online-dot" />
         </div>
+        <button type="button" className="nav-item mt-3 !text-slate-400 hover:!text-[#df2431]" onClick={onLogout}><LogOut size={18} /><span>تسجيل الخروج</span></button>
       </div>
     </aside>
   );
