@@ -21,6 +21,7 @@ const navigation = [
   { label: "المنتجات والمخزون", icon: Boxes },
   { label: "المشتريات", icon: ShoppingCart },
   { label: "المخازن", icon: Truck },
+  { label: "العاملون والموظفون", icon: UsersRound },
 ];
 
 const financeNavigation = [
@@ -44,16 +45,16 @@ export default function Sidebar({ activePage, onSelect, user, onLogout }) {
   return (
     <aside className="sidebar">
       <div className="brand-block">
-        <div className="brand-mark"><img src="/assets/ramzy-logo.jpg" alt="شعار محمد رامزي" /></div>
+        <div className="brand-mark"><img src="/assets/ramzy-logo.jpg" alt="شعار رمزي سيستم" /></div>
         <div className="brand-copy">
-          <strong>رامزي سيستم</strong>
+          <strong>رمزي سيستم</strong>
           <span>نظامك المحاسبي بوضوح</span>
         </div>
       </div>
 
       <div className="workspace-switcher">
         <div className="workspace-avatar">م</div>
-        <div><strong>شركة رامزي</strong><span>الفرع الرئيسي</span></div>
+        <div><strong>شركة رمزي</strong><span>الفرع الرئيسي</span></div>
         <ChevronDown size={16} />
       </div>
 

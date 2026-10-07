@@ -18,7 +18,7 @@ export const cashFlow = [
 export const recentInvoices = [
   { number: "INV-2026-0184", party: "شركة النور للمقاولات", type: "بيع", amount: "24,850", status: "مدفوعة", date: "اليوم، 10:42 ص" },
   { number: "PUR-2026-0091", party: "مؤسسة الأمان للتوريدات", type: "شراء", amount: "18,400", status: "آجلة", date: "اليوم، 09:18 ص" },
-  { number: "INV-2026-0183", party: "مكتب رامزي", type: "بيع داخلي", amount: "6,750", status: "مدفوعة", date: "أمس، 04:35 م" },
+  { number: "INV-2026-0183", party: "مكتب رمزي", type: "بيع داخلي", amount: "6,750", status: "مدفوعة", date: "أمس، 04:35 م" },
   { number: "INV-2026-0182", party: "أحمد حسن", type: "بيع", amount: "3,240", status: "جزئية", date: "أمس، 01:12 م" },
 ];
 

@@ -1,21 +1,15 @@
-import { ArrowLeft, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Check, RefreshCw } from "lucide-react";
 import CashFlowChart from "../components/CashFlowChart";
 import RecentInvoices from "../components/RecentInvoices";
 import AlertsPanel from "../components/AlertsPanel";
 import StatCard from "../components/StatCard";
-import { dashboardStats } from "../data/dashboardData";
+import { getBalanceSheet, getGrossProfit, getInventoryValue, getProfitLoss } from "../api/reports";
+import { listInvoices } from "../api/invoices";
+import { getDueInvoiceAlerts } from "../api/alerts";
+import { getDailyCashFlow } from "../api/cashFlow";
+import { apiErrorMessage, formatMoney, unwrapData } from "../utils/pageHelpers";
 
-export default function DashboardPage({ onCreateInvoice }) {
-  return (
-    <div className="page-container">
-      <section className="welcome-strip">
-        <div><span className="eyebrow">ملخص اليوم</span><h2>كل أرقامك المهمة في مكان واحد</h2><p>تابع حركة شركتك واتخذ قراراتك بثقة ووضوح.</p></div>
-        <div className="welcome-meta"><span className="live-dot" /> البيانات محدثة الآن <button>تحديث <ArrowLeft size={14} /></button></div>
-      </section>
-      <section className="stats-grid">{dashboardStats.map((stat) => <StatCard key={stat.label} stat={stat} />)}</section>
-      <section className="main-grid"><CashFlowChart /><AlertsPanel onCreateInvoice={onCreateInvoice} /></section>
-      <RecentInvoices />
-      <section className="bottom-note"><div className="note-icon"><Check size={17} /></div><div><strong>أنت على اطلاع كامل</strong><span>تمت مراجعة جميع العمليات المالية حتى نهاية أمس.</span></div><button>فتح سجل المراجعة <ArrowLeft size={15} /></button></section>
-    </div>
-  );
-}
+const today = new Date().toISOString().slice(0, 10); const from = `${today.slice(0, 8)}01`;
+export default function DashboardPage({ onCreateInvoice }) { const [data, setData] = useState(null); const [state, setState] = useState({ loading: true, error: "" }); const load = async () => { setState({ loading: true, error: "" }); try { const query = { from, to: today }; const [pl, gross, inventory, balance, invoices, dueAlerts, cashFlow] = await Promise.all([getProfitLoss(query), getGrossProfit(query), getInventoryValue({ asOf: today }), getBalanceSheet({ asOf: today }), listInvoices({ limit: 5 }), getDueInvoiceAlerts({ limit: 5 }), getDailyCashFlow({ date: today })]); setData({ pl, gross, inventory, balance, invoices: unwrapData(invoices), dueAlerts: unwrapData(dueAlerts), cashFlow }); setState({ loading: false, error: "" }); } catch (error) { setState({ loading: false, error: apiErrorMessage(error) }); } }; // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { load(); }, []); if (state.loading) return <div className="page-container grid min-h-[500px] place-items-center text-xs text-slate-400"><RefreshCw size={20} className="ml-2 inline animate-spin text-[#df2431]" />جارٍ تحميل لوحة التحكم...</div>; const pl = data?.pl?.data || data?.pl || {}; const gross = data?.gross?.data || data?.gross || {}; const balance = data?.balance?.data || data?.balance || {}; const inventory = data?.inventory?.data || data?.inventory || {}; const stats = [{ label: "إجمالي المبيعات", value: formatMoney(pl.revenue?.totalRevenue), unit: "ج.م", change: "الفترة الحالية", tone: "red", icon: "trending" }, { label: "صافي الأرباح", value: formatMoney(pl.netProfit), unit: "ج.م", change: "بعد المصروفات", tone: "green", icon: "profit" }, { label: "قيمة المخزون", value: formatMoney(inventory.totalValue), unit: "ج.م", change: `${inventory.totalUnits || 0} وحدة`, tone: "blue", icon: "inventory" }, { label: "المبالغ المستحقة", value: formatMoney(balance.assets?.accountsReceivable), unit: "ج.م", change: "حسب الميزانية", tone: "amber", icon: "receivables" }]; return <div className="page-container"><section className="welcome-strip"><div><span className="eyebrow">ملخص فعلي من النظام</span><h2>كل أرقام شركتك في مكان واحد</h2><p>البيانات المعروضة متزامنة مع الباك إند حتى {today}.</p></div><div className="welcome-meta"><span className="live-dot" /> البيانات محدثة الآن <button onClick={load}>تحديث <ArrowLeft size={14} /></button></div></section>{state.error && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-4 text-xs text-red-700">{state.error}</div>}<section className="stats-grid">{stats.map((stat) => <StatCard key={stat.label} stat={stat} />)}</section><section className="main-grid"><CashFlowChart data={data.cashFlow} /><AlertsPanel onCreateInvoice={onCreateInvoice} alerts={data.dueAlerts} /></section><RecentInvoices invoices={data.invoices} /><section className="bottom-note"><div className="note-icon"><Check size={17} /></div><div><strong>هامش الربح الحالي: {formatMoney(gross.grossMarginPercent)}%</strong><span>إجمالي الربح يتم حسابه من فواتير البيع وتكلفة المنتجات وعمولات العاملين.</span></div></section></div>; }
