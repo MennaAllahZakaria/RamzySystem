@@ -11,7 +11,6 @@ import CashFlowPage from "./pages/CashFlowPage";
 import PayrollPage from "./pages/PayrollPage";
 import ReportsPage from "./pages/ReportsPage";
 import SettingsPage from "./pages/SettingsPage";
-import StaffPage from "./pages/StaffPage";
 import LoginPage from "./pages/LoginPage";
 import { getMe, logout } from "./api/auth";
 import { getAuthToken } from "./api/client";
@@ -28,7 +27,7 @@ export default function App() {
   }, []);
   if (authState.loading) return <div className="grid min-h-screen place-items-center bg-[#f7f9fa] text-sm text-slate-500">جارٍ التحقق من الجلسة...</div>;
   if (!user) return <LoginPage onAuthenticated={(authenticatedUser) => { setUser(authenticatedUser); setAuthState({ loading: false, error: "" }); }} />;
-  const content = activePage === "لوحة التحكم" ? <DashboardPage onCreateInvoice={() => setModalOpen(true)} /> : activePage === "الفواتير" ? <InvoicesPage /> : activePage === "المخازن" ? <WarehousesPage /> : activePage === "العملاء والموردون" ? <PartiesPage /> : activePage === "المنتجات والمخزون" ? <ProductsPage /> : activePage === "المشتريات" ? <PurchasesPage /> : activePage === "العاملون والموظفون" ? <StaffPage /> : activePage === "التدفقات النقدية" ? <CashFlowPage /> : activePage === "الرواتب والمسحوبات" ? <PayrollPage /> : activePage === "التقارير المالية" ? <ReportsPage /> : <SettingsPage />;
+  const content = activePage === "لوحة التحكم" ? <DashboardPage onCreateInvoice={() => setModalOpen(true)} /> : activePage === "الفواتير" ? <InvoicesPage /> : activePage === "المخازن" ? <WarehousesPage /> : activePage === "العملاء والموردون" ? <PartiesPage /> : activePage === "المنتجات والمخزون" ? <ProductsPage /> : activePage === "المشتريات" ? <PurchasesPage /> : activePage === "التدفقات النقدية" ? <CashFlowPage /> : activePage === "الرواتب والمسحوبات" ? <PayrollPage /> : activePage === "التقارير المالية" ? <ReportsPage /> : <SettingsPage />;
   const handleLogout = () => { logout(); setUser(null); setModalOpen(false); setActivePage("لوحة التحكم"); };
   return <AppShell activePage={activePage} onSelect={setActivePage} user={user} onLogout={handleLogout}>{content}{modalOpen && <InvoiceModal onClose={() => setModalOpen(false)} />}</AppShell>;
 }
