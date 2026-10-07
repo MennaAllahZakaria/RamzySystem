@@ -7,6 +7,7 @@ import {
   FileBarChart,
   FileDown,
   Layers3,
+  Printer,
   RefreshCw,
   ReceiptText,
   Target,
@@ -99,19 +100,27 @@ export default function ReportsPage() {
 
   const valuationRows = payload(reports.inventoryValuation)?.data || [];
   const reportPeriod = useMemo(() => `${formatDate(range.from)} إلى ${formatDate(range.to)}`, [range]);
+  const exportCurrentPdf = async () => {
+    if (activeTab === "overview") {
+      await downloadGrossProfitReport(range, "pdf");
+      return;
+    }
+    window.print();
+  };
 
-  return <div className="page-container !pt-7">
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+  return <div className="page-container reports-page !pt-7">
+    <header className="reports-toolbar mb-6 flex flex-wrap items-end justify-between gap-4">
       <div><span className="eyebrow">التحليل المالي والمحاسبي</span><h2 className="!m-0 !text-[25px]">التقارير المالية</h2><p className="mt-2 text-xs text-slate-500">تقارير الأرباح، المبيعات، الديون، المخزون والرواتب في شاشة واحدة.</p></div>
       <div className="flex flex-wrap items-center gap-2">
         <DateInput label="من" value={range.from} onChange={(from) => setRange((current) => ({ ...current, from }))} />
         <DateInput label="إلى" value={range.to} onChange={(to) => setRange((current) => ({ ...current, to }))} />
         <button onClick={loadReports} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-[#df2431]" title="تحديث التقارير"><RefreshCw size={16} /></button>
+        <button onClick={exportCurrentPdf} className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#df2431] px-3 text-[11px] font-bold text-white shadow-sm hover:bg-[#c91e2a]" title="حفظ التقرير الحالي بصيغة PDF"><Printer size={15} /> حفظ PDF</button>
       </div>
     </header>
 
     {state.error && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-4 text-xs text-red-700">{state.error}</div>}
-    <div className="mb-5 rounded-xl border border-slate-200 bg-white p-2 shadow-sm"><div className="flex flex-wrap gap-1">{tabs.map(({ id, label, icon: Icon }) => <button key={id} onClick={() => setActiveTab(id)} className={`inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-[11px] ${activeTab === id ? "bg-[#fff1f2] font-bold text-[#df2431]" : "text-slate-500 hover:bg-slate-50"}`}><Icon size={15} />{label}</button>)}</div></div>
+    <div className="reports-tabs mb-5 rounded-xl border border-slate-200 bg-white p-2 shadow-sm"><div className="flex flex-wrap gap-1">{tabs.map(({ id, label, icon: Icon }) => <button key={id} onClick={() => setActiveTab(id)} className={`inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-[11px] ${activeTab === id ? "bg-[#fff1f2] font-bold text-[#df2431]" : "text-slate-500 hover:bg-slate-50"}`}><Icon size={15} />{label}</button>)}</div></div>
 
     {state.loading ? <LoadingState /> : <>
       {activeTab === "overview" && <OverviewReport reports={reports} period={reportPeriod} range={range} onExport={() => downloadGrossProfitReport(range, "xlsx")} />}
@@ -140,7 +149,7 @@ function OverviewReport({ reports, period, onExport }) {
     { label: "قيمة المخزون", value: inventory.totalValue, icon: <Warehouse size={18} />, tone: "blue" },
     { label: "هامش ربح الفواتير", value: margins.totals?.marginPercent, suffix: "%", icon: <BarChart3 size={18} />, tone: "amber" },
   ];
-  return <><div className="mb-5 flex justify-end"><button onClick={onExport} className="inline-flex items-center gap-2 rounded-xl bg-[#1d282e] px-4 py-3 text-xs font-bold text-white shadow-sm hover:bg-[#293b43]"><FileDown size={16} /> تصدير تقرير إجمالي الربح</button></div><div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">{cards.map((card) => <ReportCard key={card.label} {...card} />)}</div><div className="grid grid-cols-1 gap-5 xl:grid-cols-2"><ReportPanel title="الأرباح والخسائر" subtitle={period} rows={[["صافي المبيعات", pl.revenue?.netSales], ["تكلفة المنتجات", pl.directCosts?.productCost], ["عمولات الصنايعية", pl.directCosts?.workerCommission], ["إجمالي الربح", pl.grossProfit], ["المصروفات التشغيلية", pl.operatingExpenses], ["الديون المعدومة", pl.badDebt], ["صافي الربح", pl.netProfit]]} /><ReportPanel title="الميزانية العمومية" subtitle={`حتى ${formatDate(balance.asOf)}`} rows={[["النقدية والخزينة", balance.assets?.cash], ["المخزون", balance.assets?.inventory], ["العملاء / الذمم المدينة", balance.assets?.accountsReceivable], ["إجمالي الأصول", balance.assets?.totalAssets], ["الموردون / الذمم الدائنة", balance.liabilities?.accountsPayable], ["إجمالي الالتزامات", balance.liabilities?.totalLiabilities], ["حقوق الملكية التقديرية", balance.equity?.balancingEquity]]} /><ReportPanel title="ملخص إجمالي الربح" subtitle={period} rows={[["مبيعات المنتجات", gross.revenue?.productSales], ["مبيعات المصنعيات", gross.revenue?.laborSales], ["تكلفة المنتجات", gross.directCosts?.productCost], ["عمولات الصنايعية", gross.directCosts?.workerCommission], ["هامش الربح", gross.grossMarginPercent, "%"], ["صافي الربح", gross.netProfit]]} /></div></>;
+  return <><div className="no-print mb-5 flex justify-end"><button onClick={onExport} className="inline-flex items-center gap-2 rounded-xl bg-[#1d282e] px-4 py-3 text-xs font-bold text-white shadow-sm hover:bg-[#293b43]"><FileDown size={16} /> تصدير Excel</button></div><div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">{cards.map((card) => <ReportCard key={card.label} {...card} />)}</div><div className="grid grid-cols-1 gap-5 xl:grid-cols-2"><ReportPanel title="الأرباح والخسائر" subtitle={period} rows={[["صافي المبيعات", pl.revenue?.netSales], ["تكلفة المنتجات", pl.directCosts?.productCost], ["عمولات الصنايعية", pl.directCosts?.workerCommission], ["إجمالي الربح", pl.grossProfit], ["المصروفات التشغيلية", pl.operatingExpenses], ["الديون المعدومة", pl.badDebt], ["صافي الربح", pl.netProfit]]} /><ReportPanel title="الميزانية العمومية" subtitle={`حتى ${formatDate(balance.asOf)}`} rows={[["النقدية والخزينة", balance.assets?.cash], ["المخزون", balance.assets?.inventory], ["العملاء / الذمم المدينة", balance.assets?.accountsReceivable], ["إجمالي الأصول", balance.assets?.totalAssets], ["الموردون / الذمم الدائنة", balance.liabilities?.accountsPayable], ["إجمالي الالتزامات", balance.liabilities?.totalLiabilities], ["حقوق الملكية التقديرية", balance.equity?.balancingEquity]]} /><ReportPanel title="ملخص إجمالي الربح" subtitle={period} rows={[["مبيعات المنتجات", gross.revenue?.productSales], ["مبيعات المصنعيات", gross.revenue?.laborSales], ["تكلفة المنتجات", gross.directCosts?.productCost], ["عمولات الصنايعية", gross.directCosts?.workerCommission], ["هامش الربح", gross.grossMarginPercent, "%"], ["صافي الربح", gross.netProfit]]} /></div></>;
 }
 
 function SalesReport({ reports }) {
