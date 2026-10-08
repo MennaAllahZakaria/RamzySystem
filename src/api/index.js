@@ -11,6 +11,7 @@ export * as reportsApi from "./reports";
 export * as cashFlowApi from "./cashFlow";
 export * as partyBalancesApi from "./partyBalances";
 export * as employeesApi from "./employees";
+export * as workersApi from "./workers";
 export * as quotesApi from "./quotes";
 export * as returnsApi from "./returns";
 export * as alertsApi from "./alerts";

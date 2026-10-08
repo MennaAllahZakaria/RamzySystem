@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   Truck,
   UsersRound,
+  UserCog,
   WalletCards,
 } from "lucide-react";
 
@@ -21,11 +22,13 @@ const navigation = [
   { label: "المنتجات والمخزون", icon: Boxes },
   { label: "المشتريات", icon: ShoppingCart },
   { label: "المخازن", icon: Truck },
+  { label: "عروض الأسعار", icon: ClipboardList },
 ];
 
 const financeNavigation = [
   { label: "التدفقات النقدية", icon: WalletCards },
   { label: "الرواتب والمسحوبات", icon: CircleDollarSign },
+  { label: "الموظفون والعمال", icon: UserCog },
   { label: "التقارير المالية", icon: BarChart3 },
 ];
 
