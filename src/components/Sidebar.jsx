@@ -32,6 +32,7 @@ const financeNavigation = [
   { label: "الرواتب والمسحوبات", icon: CircleDollarSign },
   { label: "الموظفون والعمال", icon: UserCog },
   { label: "التقارير المالية", icon: BarChart3 },
+  { label: "المستخدمون", icon: UserCog },
 ];
 
 function NavItem({ item, onSelect }) {
