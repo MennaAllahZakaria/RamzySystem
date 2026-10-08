@@ -7,3 +7,5 @@ export const getWorkerStatement = (id, query) => apiClient.get(`/payroll/worker/
 export const calculateEmployeePayroll = (id, query) => apiClient.get(`/payroll/employee/${id}/calculate`, query);
 export const getEmployeeStatement = (id, query) => apiClient.get(`/payroll/employee/${id}/statement`, query);
 export const paySalary = (payload) => apiClient.post("/payroll/pay", payload);
+export const cancelSalaryPayment = (id) => apiClient.delete(`/payroll/payments/${id}`);
+export const cancelWithdrawal = (id) => apiClient.delete(`/payroll/withdrawals/${id}`);
