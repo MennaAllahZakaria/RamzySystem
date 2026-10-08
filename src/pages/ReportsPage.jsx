@@ -31,7 +31,10 @@ import {
   getQuotationsSummary,
   getSalesSummary,
 } from "../api/reports";
-import { apiErrorMessage, formatDate, formatMoney } from "../utils/pageHelpers";
+import { listInvoices } from "../api/invoices";
+import { listEmployees } from "../api/employees";
+import { listWorkers } from "../api/workers";
+import { apiErrorMessage, formatDate, formatMoney, numberValue, unwrapData } from "../utils/pageHelpers";
 
 const today = new Date().toISOString().slice(0, 10);
 const monthStart = `${today.slice(0, 8)}01`;
@@ -47,6 +50,18 @@ const tabs = [
 const payload = (response) => response?.data ?? response ?? {};
 const money = (value) => formatMoney(value);
 const percent = (value) => `${money(value)}%`;
+
+function previousRange(range) {
+  const from = new Date(`${range.from}T00:00:00`);
+  const to = new Date(`${range.to}T00:00:00`);
+  const days = Math.max(1, Math.round((to - from) / 86400000) + 1);
+  const previousTo = new Date(from); previousTo.setDate(previousTo.getDate() - 1);
+  const previousFrom = new Date(previousTo); previousFrom.setDate(previousFrom.getDate() - days + 1);
+  return { from: previousFrom.toISOString().slice(0, 10), to: previousTo.toISOString().slice(0, 10) };
+}
+
+function invoiceTotal(rows) { return rows.reduce((sum, row) => sum + numberValue(row.total), 0); }
+function growthRate(current, previous) { return previous ? ((current - previous) / previous) * 100 : current ? 100 : 0; }
 
 function dateQuery(range) {
   return { from: range.from, to: range.to };
@@ -72,7 +87,8 @@ export default function ReportsPage() {
     try {
       const period = dateQuery(range);
       const asOf = asOfQuery(range);
-      const [profitLoss, grossProfit, sales, expenses, customerAging, supplierAging, payroll, quotations, balanceSheet, inventoryValue, netInvoices, invoiceMargins, inventoryValuation] = await Promise.all([
+      const previous = previousRange(range);
+      const [profitLoss, grossProfit, sales, expenses, customerAging, supplierAging, payroll, quotations, balanceSheet, inventoryValue, netInvoices, invoiceMargins, inventoryValuation, purchases, previousSales, employees, workers] = await Promise.all([
         getProfitLoss(period),
         getGrossProfit(period),
         getSalesSummary(period),
@@ -86,8 +102,12 @@ export default function ReportsPage() {
         getNetInvoices(period),
         getInvoiceMargins(period),
         getInventoryValuation({ ...asOf, method: valuationMethod }),
+        listInvoices({ limit: 100, invoiceType: "purchase", status: "issued" }),
+        getSalesSummary(previous),
+        listEmployees({ limit: 100 }),
+        listWorkers({ limit: 100 }),
       ]);
-      setReports({ profitLoss, grossProfit, sales, expenses, customerAging, supplierAging, payroll, quotations, balanceSheet, inventoryValue, netInvoices, invoiceMargins, inventoryValuation });
+      setReports({ profitLoss, grossProfit, sales, expenses, customerAging, supplierAging, payroll, quotations, balanceSheet, inventoryValue, netInvoices, invoiceMargins, inventoryValuation, purchases: unwrapData(purchases), previousSales, employees: unwrapData(employees), workers: unwrapData(workers) });
       setState({ loading: false, error: "" });
     } catch (error) {
       setState({ loading: false, error: apiErrorMessage(error) });
@@ -137,7 +157,7 @@ function DateInput({ label, value, onChange }) { return <label className="flex h
 
 function LoadingState() { return <div className="rounded-2xl border border-slate-200 bg-white p-16 text-center text-xs text-slate-400 shadow-sm"><RefreshCw size={22} className="mx-auto mb-3 animate-spin text-[#df2431]" />جارٍ تحميل التقارير...</div>; }
 
-function OverviewReport({ reports, period, onExport }) {
+function OverviewReport({ reports, period, range, onExport }) {
   const pl = payload(reports.profitLoss);
   const gross = payload(reports.grossProfit);
   const balance = payload(reports.balanceSheet);
@@ -149,8 +169,20 @@ function OverviewReport({ reports, period, onExport }) {
     { label: "قيمة المخزون", value: inventory.totalValue, icon: <Warehouse size={18} />, tone: "blue" },
     { label: "هامش ربح الفواتير", value: margins.totals?.marginPercent, suffix: "%", icon: <BarChart3 size={18} />, tone: "amber" },
   ];
-  return <><div className="no-print mb-5 flex justify-end"><button onClick={onExport} className="inline-flex items-center gap-2 rounded-xl bg-[#1d282e] px-4 py-3 text-xs font-bold text-white shadow-sm hover:bg-[#293b43]"><FileDown size={16} /> تصدير Excel</button></div><div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">{cards.map((card) => <ReportCard key={card.label} {...card} />)}</div><div className="grid grid-cols-1 gap-5 xl:grid-cols-2"><ReportPanel title="الأرباح والخسائر" subtitle={period} rows={[["صافي المبيعات", pl.revenue?.netSales], ["تكلفة المنتجات", pl.directCosts?.productCost], ["عمولات الصنايعية", pl.directCosts?.workerCommission], ["إجمالي الربح", pl.grossProfit], ["المصروفات التشغيلية", pl.operatingExpenses], ["الديون المعدومة", pl.badDebt], ["صافي الربح", pl.netProfit]]} /><ReportPanel title="الميزانية العمومية" subtitle={`حتى ${formatDate(balance.asOf)}`} rows={[["النقدية والخزينة", balance.assets?.cash], ["المخزون", balance.assets?.inventory], ["العملاء / الذمم المدينة", balance.assets?.accountsReceivable], ["إجمالي الأصول", balance.assets?.totalAssets], ["الموردون / الذمم الدائنة", balance.liabilities?.accountsPayable], ["إجمالي الالتزامات", balance.liabilities?.totalLiabilities], ["حقوق الملكية التقديرية", balance.equity?.balancingEquity]]} /><ReportPanel title="ملخص إجمالي الربح" subtitle={period} rows={[["مبيعات المنتجات", gross.revenue?.productSales], ["مبيعات المصنعيات", gross.revenue?.laborSales], ["تكلفة المنتجات", gross.directCosts?.productCost], ["عمولات الصنايعية", gross.directCosts?.workerCommission], ["هامش الربح", gross.grossMarginPercent, "%"], ["صافي الربح", gross.netProfit]]} /></div></>;
+  return <><div className="no-print mb-5 flex justify-end"><button onClick={onExport} className="inline-flex items-center gap-2 rounded-xl bg-[#1d282e] px-4 py-3 text-xs font-bold text-white shadow-sm hover:bg-[#293b43]"><FileDown size={16} /> تصدير Excel</button></div><BusinessSnapshot reports={reports} range={range} /><div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">{cards.map((card) => <ReportCard key={card.label} {...card} />)}</div><div className="grid grid-cols-1 gap-5 xl:grid-cols-2"><ReportPanel title="الأرباح والخسائر" subtitle={period} rows={[["صافي المبيعات", pl.revenue?.netSales], ["تكلفة المنتجات", pl.directCosts?.productCost], ["عمولات الصنايعية", pl.directCosts?.workerCommission], ["إجمالي الربح", pl.grossProfit], ["المصروفات التشغيلية", pl.operatingExpenses], ["الديون المعدومة", pl.badDebt], ["صافي الربح", pl.netProfit]]} /><ReportPanel title="الميزانية العمومية" subtitle={`حتى ${formatDate(balance.asOf)}`} rows={[["النقدية والخزينة", balance.assets?.cash], ["المخزون", balance.assets?.inventory], ["العملاء / الذمم المدينة", balance.assets?.accountsReceivable], ["إجمالي الأصول", balance.assets?.totalAssets], ["الموردون / الذمم الدائنة", balance.liabilities?.accountsPayable], ["إجمالي الالتزامات", balance.liabilities?.totalLiabilities], ["حقوق الملكية التقديرية", balance.equity?.balancingEquity]]} /><ReportPanel title="ملخص إجمالي الربح" subtitle={period} rows={[["مبيعات المنتجات", gross.revenue?.productSales], ["مبيعات المصنعيات", gross.revenue?.laborSales], ["تكلفة المنتجات", gross.directCosts?.productCost], ["عمولات الصنايعية", gross.directCosts?.workerCommission], ["هامش الربح", gross.grossMarginPercent, "%"], ["صافي الربح", gross.netProfit]]} /></div></>;
 }
+
+function BusinessSnapshot({ reports, range }) {
+  const sales = payload(reports.sales); const previousSales = payload(reports.previousSales);
+  const purchases = (reports.purchases || []).filter((row) => row.issueDate >= `${range.from}T00:00:00.000Z` && row.issueDate <= `${range.to}T23:59:59.999Z`);
+  const previous = previousRange(range); const previousPurchases = (reports.purchases || []).filter((row) => row.issueDate >= `${previous.from}T00:00:00.000Z` && row.issueDate <= `${previous.to}T23:59:59.999Z`);
+  const salesValue = numberValue(sales.totals?.sales); const previousSalesValue = numberValue(previousSales.totals?.sales); const purchasesValue = invoiceTotal(purchases); const previousPurchasesValue = invoiceTotal(previousPurchases);
+  const staff = [...(reports.employees || []).map((row) => ({ ...row, kind: "موظف" })), ...(reports.workers || []).map((row) => ({ ...row, kind: "عامل" }))];
+  const staffTotal = staff.length; const activeStaff = staff.filter((row) => row.isActive !== false).length;
+  return <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="mb-4 flex flex-wrap items-center justify-between gap-2"><div><span className="eyebrow">لوحة الأداء</span><h2 className="!m-0 !text-[17px]">إحصائيات المبيعات والتوريدات وحركة الفريق</h2></div><span className="text-[10px] text-slate-400">مقارنة بالفترة السابقة المماثلة</span></div><div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4"><GrowthCard label="إجمالي المبيعات" value={salesValue} growth={growthRate(salesValue, previousSalesValue)} tone="red" /><GrowthCard label="إجمالي التوريدات" value={purchasesValue} growth={growthRate(purchasesValue, previousPurchasesValue)} tone="blue" /><GrowthCard label="إجمالي الفريق" value={staffTotal} suffix="فرد" growth={0} tone="green" /><GrowthCard label="الفريق النشط" value={activeStaff} suffix="فرد" growth={staffTotal ? (activeStaff / staffTotal) * 100 : 0} tone="amber" /></div><div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2"><DataTable title="حركة الموظفين والعمال" columns={["الاسم", "النوع", "الكود", "المرتب الأساسي", "الحالة"]} rows={staff.map((row) => [row.name, row.kind, row.code || "—", money(row.baseSalary), row.isActive === false ? "غير نشط" : "نشط"])} empty="لا توجد بيانات للفريق." /><ReportPanel title="مؤشرات النمو" subtitle="نسبة التغير عن الفترة السابقة" rows={[["نمو المبيعات", growthRate(salesValue, previousSalesValue), "%"], ["نمو التوريدات", growthRate(purchasesValue, previousPurchasesValue), "%"], ["نسبة نشاط الفريق", staffTotal ? (activeStaff / staffTotal) * 100 : 0, "%"], ["عدد فواتير البيع", sales.totals?.invoiceCount, "فاتورة"], ["عدد فواتير التوريد", purchases.length, "فاتورة"]]} /></div></section>;
+}
+
+function GrowthCard({ label, value, growth, suffix = "ج.م", tone }) { const positive = growth >= 0; return <div className={`rounded-2xl border p-4 ${tone === "red" ? "border-red-100 bg-red-50" : tone === "blue" ? "border-blue-100 bg-blue-50" : tone === "green" ? "border-emerald-100 bg-emerald-50" : "border-amber-100 bg-amber-50"}`}><span className="text-[11px] text-slate-600">{label}</span><strong className="mt-2 block text-2xl text-slate-800">{money(value)} <small className="text-xs font-normal text-slate-400">{suffix}</small></strong><span className={`mt-2 inline-flex items-center gap-1 text-[10px] font-bold ${positive ? "text-emerald-600" : "text-red-600"}`}>{positive ? <ArrowUp size={13} /> : <ArrowDown size={13} />}{money(Math.abs(growth))}% عن الفترة السابقة</span></div>; }
 
 function SalesReport({ reports }) {
   const sales = payload(reports.sales);
