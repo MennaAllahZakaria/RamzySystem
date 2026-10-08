@@ -82,3 +82,11 @@
   .sidebar-nav { padding-bottom: 12px; }
   .sidebar-bottom { margin-top: auto; }
 }
+
+/* Sidebar stays in place while only its menu items scroll */
+@media (min-width: 761px) {
+  .sidebar-wrap { position: sticky; top: 0; height: 100vh; align-self: flex-start; }
+  .sidebar { position: relative; height: 100vh; min-height: 100vh; overflow: hidden; }
+  .sidebar-nav { min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+  .sidebar-bottom { flex: 0 0 auto; }
+}
