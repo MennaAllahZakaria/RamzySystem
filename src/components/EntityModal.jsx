@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import { createCustomer } from "../api/customers";
+import { createCustomer, createCustomerSupplier } from "../api/customers";
 import { createSupplier } from "../api/suppliers";
 import { createEmployee } from "../api/employees";
 import { createWorker } from "../api/workers";
@@ -9,6 +9,7 @@ import { apiErrorMessage } from "../utils/pageHelpers";
 const configs = {
   customer: { title: "إضافة عميل", submit: createCustomer, fields: ["name", "phone", "email", "code", "openingBalance"] },
   supplier: { title: "إضافة مورد", submit: createSupplier, fields: ["name", "phone", "email", "code", "openingBalance"] },
+  both: { title: "إضافة عميل ومورد", submit: createCustomerSupplier, fields: ["name", "phone", "email", "code", "openingBalance"] },
   employee: { title: "إضافة موظف", submit: createEmployee, fields: ["name", "code", "phone", "nationalId", "baseSalary", "department"] },
   worker: { title: "إضافة عامل", submit: createWorker, fields: ["name", "code", "phone", "nationalId", "baseSalary", "commissionRate"] },
 };
