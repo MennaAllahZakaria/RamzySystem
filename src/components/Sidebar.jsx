@@ -38,7 +38,7 @@ const financeNavigation = [
 function NavItem({ item, onSelect }) {
   const Icon = item.icon;
   return (
-    <button className={`nav-item ${item.active ? "nav-item-active" : ""}`} onClick={() => onSelect(item.label)}>
+    <button type="button" className={`nav-item ${item.active ? "nav-item-active" : ""}`} onClick={() => onSelect(item.label)}>
       <Icon size={19} strokeWidth={item.active ? 2.3 : 1.9} />
       <span>{item.label}</span>
       {item.badge && <span className="nav-badge">{item.badge}</span>}
@@ -71,7 +71,7 @@ export default function Sidebar({ activePage, onSelect, user, onLogout }) {
       </nav>
 
       <div className="sidebar-bottom">
-        <button className={`nav-item ${activePage === "الإعدادات" ? "nav-item-active" : ""}`} onClick={() => onSelect("الإعدادات")}>
+        <button type="button" className={`nav-item ${activePage === "الإعدادات" ? "nav-item-active" : ""}`} onClick={() => onSelect("الإعدادات")}>
           <Settings size={19} /><span>الإعدادات</span>
         </button>
         <div className="help-card">
