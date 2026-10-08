@@ -89,7 +89,7 @@ export default function ReportsPage() {
       const period = dateQuery(range);
       const asOf = asOfQuery(range);
       const previous = previousRange(range);
-      const [profitLoss, grossProfit, sales, expenses, customerAging, supplierAging, payroll, quotations, balanceSheet, inventoryValue, netInvoices, invoiceMargins, inventoryValuation, purchases, previousSales, employees, workers] = await Promise.all([
+      const [profitLoss, grossProfit, sales, expenses, customerAging, supplierAging, payroll, quotations, balanceSheet, inventoryValue, netInvoices, invoiceMargins, inventoryValuation, purchases, previousSales, previousPurchases, employees, workers] = await Promise.all([
         getProfitLoss(period),
         getGrossProfit(period),
         getSalesSummary(period),
@@ -103,12 +103,13 @@ export default function ReportsPage() {
         getNetInvoices(period),
         getInvoiceMargins(period),
         getInventoryValuation({ ...asOf, method: valuationMethod }),
-        listInvoices({ limit: 100, invoiceType: "purchase", status: "issued" }),
+        listInvoices({ limit: 100, invoiceType: "purchase", status: "issued", from: range.from, to: range.to }),
         getSalesSummary(previous),
+        listInvoices({ limit: 100, invoiceType: "purchase", status: "issued", from: previous.from, to: previous.to }),
         listEmployees({ limit: 100 }),
         listWorkers({ limit: 100 }),
       ]);
-      setReports({ profitLoss, grossProfit, sales, expenses, customerAging, supplierAging, payroll, quotations, balanceSheet, inventoryValue, netInvoices, invoiceMargins, inventoryValuation, purchases: unwrapData(purchases), previousSales, employees: unwrapData(employees), workers: unwrapData(workers) });
+      setReports({ profitLoss, grossProfit, sales, expenses, customerAging, supplierAging, payroll, quotations, balanceSheet, inventoryValue, netInvoices, invoiceMargins, inventoryValuation, purchases: unwrapData(purchases), previousPurchases: unwrapData(previousPurchases), previousSales, employees: unwrapData(employees), workers: unwrapData(workers) });
       setState({ loading: false, error: "" });
     } catch (error) {
       setState({ loading: false, error: apiErrorMessage(error) });
@@ -182,10 +183,10 @@ function MonthlyBusinessChart({ reports, range }) {
   return <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="mb-4 flex flex-wrap items-center justify-between gap-2"><div><span className="eyebrow">تحليل شهري تفاعلي</span><h2 className="!m-0 !text-[17px]">نمو المبيعات والمشتريات شهرياً</h2></div><span className="text-[10px] text-slate-400">مرر المؤشر على الأعمدة لعرض القيمة</span></div><div className="h-[310px] w-full" dir="ltr"><ResponsiveContainer width="100%" height="100%"><BarChart data={rows} margin={{ top: 12, right: 12, left: 8, bottom: 8 }} barGap={6}><CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#edf0f1" /><XAxis dataKey="month" tick={{ fontSize: 11, fill: "#89949a" }} tickLine={false} axisLine={false} /><YAxis tick={{ fontSize: 10, fill: "#89949a" }} tickLine={false} axisLine={false} tickFormatter={(value) => new Intl.NumberFormat("ar-EG", { notation: "compact" }).format(value)} /><Tooltip cursor={{ fill: "#fff5f5" }} formatter={(value, name) => [`${formatMoney(value)} ج.م`, name === "sales" ? "المبيعات" : "المشتريات"]} labelFormatter={(label) => `الشهر: ${label}`} contentStyle={{ borderRadius: 12, border: "1px solid #e9eef0", fontSize: 11, direction: "rtl" }} /><Legend verticalAlign="top" align="right" height={32} formatter={(value) => value === "sales" ? "المبيعات" : "المشتريات"} /><Bar dataKey="sales" name="sales" fill="#df2431" radius={[5, 5, 0, 0]} maxBarSize={28} /><Bar dataKey="purchases" name="purchases" fill="#4d8ac7" radius={[5, 5, 0, 0]} maxBarSize={28} /></BarChart></ResponsiveContainer></div></section>;
 }
 
-function BusinessSnapshot({ reports, range }) {
+function BusinessSnapshot({ reports }) {
   const sales = payload(reports.sales); const previousSales = payload(reports.previousSales);
-  const purchases = (reports.purchases || []).filter((row) => row.issueDate >= `${range.from}T00:00:00.000Z` && row.issueDate <= `${range.to}T23:59:59.999Z`);
-  const previous = previousRange(range); const previousPurchases = (reports.purchases || []).filter((row) => row.issueDate >= `${previous.from}T00:00:00.000Z` && row.issueDate <= `${previous.to}T23:59:59.999Z`);
+  const purchases = reports.purchases || [];
+  const previousPurchases = reports.previousPurchases || [];
   const salesValue = numberValue(sales.totals?.sales); const previousSalesValue = numberValue(previousSales.totals?.sales); const purchasesValue = invoiceTotal(purchases); const previousPurchasesValue = invoiceTotal(previousPurchases);
   const staff = [...(reports.employees || []).map((row) => ({ ...row, kind: "موظف" })), ...(reports.workers || []).map((row) => ({ ...row, kind: "عامل" }))];
   const staffTotal = staff.length; const activeStaff = staff.filter((row) => row.isActive !== false).length;
