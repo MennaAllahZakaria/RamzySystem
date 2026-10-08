@@ -3,5 +3,6 @@ export const listInvoices = (query) => apiClient.get("/invoices", query);
 export const getInvoice = (id) => apiClient.get(`/invoices/${id}`);
 export const createInvoiceDraft = (payload) => apiClient.post("/invoices", payload);
 export const updateInvoiceDraft = (id, payload) => apiClient.patch(`/invoices/${id}`, payload);
+export const deleteInvoice = (id) => apiClient.post(`/invoices/${id}/cancel`);
 export const issueInvoice = (id) => apiClient.post(`/invoices/${id}/issue`);
 export const cancelInvoice = (id) => apiClient.post(`/invoices/${id}/cancel`);

@@ -64,3 +64,7 @@
   .mobile-menu { display: grid; place-items: center; }
   .invoice-modal.max-w-4xl { width: calc(100vw - 20px); padding: 16px; }
 }
+
+/* Keep navigation aligned while the content scrolls */
+.topbar { position: sticky; top: 0; z-index: 8; backdrop-filter: blur(14px); }
+@media (max-width: 760px) { .sidebar { overflow-y: auto; } }
