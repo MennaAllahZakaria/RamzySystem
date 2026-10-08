@@ -5,6 +5,7 @@ import {
   CircleDollarSign,
   ClipboardList,
   FileText,
+  ReceiptText,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -17,12 +18,13 @@ import {
 
 const navigation = [
   { label: "لوحة التحكم", icon: LayoutDashboard, active: true },
-  { label: "الفواتير", icon: FileText, badge: "12" },
+  { label: "الفواتير", icon: FileText },
   { label: "العملاء والموردون", icon: UsersRound },
   { label: "المنتجات والمخزون", icon: Boxes },
   { label: "المشتريات", icon: ShoppingCart },
   { label: "المخازن", icon: Truck },
   { label: "عروض الأسعار", icon: ClipboardList },
+  { label: "المصروفات", icon: ReceiptText },
 ];
 
 const financeNavigation = [
