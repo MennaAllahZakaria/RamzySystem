@@ -68,3 +68,17 @@
 /* Keep navigation aligned while the content scrolls */
 .topbar { position: sticky; top: 0; z-index: 8; backdrop-filter: blur(14px); }
 @media (max-width: 760px) { .sidebar { overflow-y: auto; } }
+
+/* RTL sidebar alignment */
+.sidebar-wrap { flex: 0 0 278px; }
+@media (min-width: 761px) {
+  .sidebar-wrap { position: relative; }
+  .sidebar { width: 278px; box-sizing: border-box; }
+}
+@media (max-width: 760px) {
+  .sidebar-wrap { position: fixed; inset: 0 0 0 auto; width: min(278px, 88vw); transform: translateX(100%); overflow: hidden; }
+  .sidebar-wrap.is-open { transform: translateX(0); }
+  .sidebar { width: 100%; height: 100dvh; min-height: 100dvh; padding: 20px 16px 16px; overflow-y: auto; }
+  .sidebar-nav { padding-bottom: 12px; }
+  .sidebar-bottom { margin-top: auto; }
+}
