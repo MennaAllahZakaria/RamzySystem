@@ -48,7 +48,7 @@ const tabs = [
   { id: "quotes", label: "عروض الأسعار", icon: FileBarChart },
 ];
 
-const payload = (response) => response?.data ?? response ?? {};
+const payload = (response) => response?.data && !Array.isArray(response.data) && Object.keys(response || {}).length <= 2 ? response.data : response ?? {};
 const money = (value) => formatMoney(value);
 const percent = (value) => `${money(value)}%`;
 
@@ -80,8 +80,8 @@ export default function ReportsPage() {
   const [state, setState] = useState({ loading: true, error: "" });
 
   const loadReports = async () => {
-    if (!range.from || !range.to || range.from >= range.to) {
-      setState({ loading: false, error: "يجب أن يكون تاريخ البداية قبل تاريخ النهاية." });
+    if (!range.from || !range.to || range.from > range.to) {
+      setState({ loading: false, error: "يجب أن يكون تاريخ البداية قبل أو مساويًا لتاريخ النهاية." });
       return;
     }
     setState({ loading: true, error: "" });

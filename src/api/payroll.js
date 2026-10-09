@@ -9,3 +9,6 @@ export const getEmployeeStatement = (id, query) => apiClient.get(`/payroll/emplo
 export const paySalary = (payload) => apiClient.post("/payroll/pay", payload);
 export const cancelSalaryPayment = (id) => apiClient.delete(`/payroll/payments/${id}`);
 export const cancelWithdrawal = (id) => apiClient.delete(`/payroll/withdrawals/${id}`);
+export const listAdjustments = (query) => apiClient.get("/payroll/adjustments", query);
+export const createAdjustment = (payload) => apiClient.post("/payroll/adjustments", payload);
+export const cancelAdjustment = (id) => apiClient.delete(`/payroll/adjustments/${id}`);
