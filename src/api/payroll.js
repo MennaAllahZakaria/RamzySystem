@@ -4,8 +4,10 @@ export const listWithdrawals = (query) => apiClient.get("/payroll/withdrawals", 
 export const createWithdrawal = (payload) => apiClient.post("/payroll/withdrawals", payload);
 export const calculateWorkerPayroll = (id, query) => apiClient.get(`/payroll/worker/${id}/calculate`, query);
 export const getWorkerStatement = (id, query) => apiClient.get(`/payroll/worker/${id}/statement`, query);
+export const getWorkerStatementPdf = (id, query) => apiClient.download(`/payroll/worker/${id}/statement/pdf`, query);
 export const calculateEmployeePayroll = (id, query) => apiClient.get(`/payroll/employee/${id}/calculate`, query);
 export const getEmployeeStatement = (id, query) => apiClient.get(`/payroll/employee/${id}/statement`, query);
+export const getEmployeeStatementPdf = (id, query) => apiClient.download(`/payroll/employee/${id}/statement/pdf`, query);
 export const paySalary = (payload) => apiClient.post("/payroll/pay", payload);
 export const cancelSalaryPayment = (id) => apiClient.delete(`/payroll/payments/${id}`);
 export const cancelWithdrawal = (id) => apiClient.delete(`/payroll/withdrawals/${id}`);

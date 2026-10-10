@@ -10,7 +10,7 @@ export async function apiRequest(path, options = {}) {
   const contentType = response.headers.get("content-type") || "";
   const shouldReadBlob = responseType === "blob" || (responseType === "auto" && !contentType.includes("application/json") && !contentType.startsWith("text/"));
   const data = shouldReadBlob ? await response.blob() : contentType.includes("application/json") ? await response.json() : await response.text();
-  if (!response.ok) { const error = new Error(data?.message || `Request failed with status ${response.status}`); error.status = response.status; error.data = data; throw error; }
+  if (!response.ok) { let errorData = data; if (data instanceof Blob) { try { errorData = JSON.parse(await data.text()); } catch (_) { /* keep blob when the server returned a non-JSON error */ } } const error = new Error(errorData?.message || `Request failed with status ${response.status}`); error.status = response.status; error.data = errorData; throw error; }
   return data;
 }
 export const apiClient = { get: (path, query) => apiRequest(path, { method: "GET", query }), post: (path, body, query) => apiRequest(path, { method: "POST", body, query }), patch: (path, body, query) => apiRequest(path, { method: "PATCH", body, query }), put: (path, body, query) => apiRequest(path, { method: "PUT", body, query }), delete: (path, query) => apiRequest(path, { method: "DELETE", query }), download: (path, query) => apiRequest(path, { method: "GET", query, responseType: "blob" }) };
