@@ -5,5 +5,5 @@ export const createInvoiceDraft = (payload) => apiClient.post("/invoices", paylo
 export const updateInvoiceDraft = (id, payload) => apiClient.patch(`/invoices/${id}`, payload);
 export const deleteInvoice = (id) => apiClient.post(`/invoices/${id}/cancel`);
 export const issueInvoice = (id) => apiClient.post(`/invoices/${id}/issue`);
-export const cancelInvoice = (id) => apiClient.post(`/invoices/${id}/cancel`);
+export const cancelInvoice = (id, query) => apiClient.post(`/invoices/${id}/cancel`, undefined, query);
 export const getInvoicePdf = (id) => apiClient.download(`/invoices/${id}/pdf`);
