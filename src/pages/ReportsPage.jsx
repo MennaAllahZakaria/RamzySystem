@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PdfPreviewModal from "../components/PdfPreviewModal";
 import {
   ArrowDown,
   ArrowUp,
@@ -78,6 +79,7 @@ export default function ReportsPage() {
   const [valuationMethod, setValuationMethod] = useState("actual_cost");
   const [reports, setReports] = useState({});
   const [state, setState] = useState({ loading: true, error: "" });
+  const [pdfPreview, setPdfPreview] = useState(null);
 
   const loadReports = async () => {
     if (!range.from || !range.to || range.from > range.to) {
@@ -124,7 +126,8 @@ export default function ReportsPage() {
   const reportPeriod = useMemo(() => `${formatDate(range.from)} إلى ${formatDate(range.to)}`, [range]);
   const exportCurrentPdf = async () => {
     if (activeTab === "overview") {
-      await downloadGrossProfitReport(range, "pdf");
+      const blob = await downloadGrossProfitReport(range, "pdf");
+      setPdfPreview({ blob, filename: `gross-profit-${range.from}-${range.to}.pdf` });
       return;
     }
     window.print();
@@ -152,6 +155,7 @@ export default function ReportsPage() {
       {activeTab === "inventory" && <InventoryReport reports={reports} method={valuationMethod} setMethod={setValuationMethod} onReload={loadReports} rows={valuationRows} />}
       {activeTab === "quotes" && <QuotesReport reports={reports} />}
     </>}
+    {pdfPreview && <PdfPreviewModal blob={pdfPreview.blob} filename={pdfPreview.filename} onClose={() => setPdfPreview(null)} />}
   </div>;
 }
 
@@ -222,10 +226,11 @@ function DataTable({ title, columns, rows, empty }) { return <section className=
 
 async function downloadGrossProfitReport(range, format = "pdf") {
   const blob = await exportGrossProfit({ ...dateQuery(range), format });
+  if (format === "pdf") return blob;
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `gross-profit-${range.from}-${range.to}.${format === "pdf" ? "pdf" : "xlsx"}`;
+  link.download = `gross-profit-${range.from}-${range.to}.xlsx`;
   link.click();
   URL.revokeObjectURL(url);
 }
