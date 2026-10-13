@@ -5,6 +5,7 @@ export const exportGrossProfit = (query) => apiClient.download("/reports/gross-p
 export const getSalesSummary = (query) => apiClient.get("/reports/sales-summary", query);
 export const getExpensesSummary = (query) => apiClient.get("/reports/expenses-summary", query);
 export const getAgingReport = (role, query) => apiClient.get(`/reports/aging/${role}`, query);
+export const getDueInvoiceAlerts = (query) => apiClient.get("/alerts/due-invoices", query);
 export const getPayrollSummary = (query) => apiClient.get("/reports/payroll-summary", query);
 export const getQuotationsSummary = (query) => apiClient.get("/reports/quotations-summary", query);
 export const getBalanceSheet = (query) => apiClient.get("/reports/balance-sheet", query);
