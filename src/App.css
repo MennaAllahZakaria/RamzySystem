@@ -271,3 +271,64 @@ html, body, #root { max-width: 100%; overflow-x: hidden; }
   .welcome-meta { font-size: 10px; }
   .quick-actions { grid-template-columns: 1fr; }
 }
+
+
+/* Mobile-first finishing pass */
+@media (max-width: 640px) {
+  .main-content { min-width: 0; overflow-x: hidden; }
+  .page-container { width: 100%; max-width: 100%; min-width: 0; }
+  .page-container h2 { max-width: 100%; font-size: 22px !important; line-height: 1.5 !important; word-break: normal; }
+  .page-container > .mb-6 { margin-bottom: 20px; }
+  .page-container > .mb-6 > .flex:last-child { width: 100%; display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .page-container > .mb-6 > .flex:last-child > button,
+  .page-container > .mb-6 > .flex:last-child > label,
+  .page-container > .mb-6 > .flex:last-child > select { width: 100%; min-width: 0; justify-content: center; }
+  .page-container > .mb-6 > .flex:last-child > button { min-height: 44px; }
+  .page-container > .mb-6 > .flex:last-child > button.grid { width: 100%; }
+  .page-container .flex.items-center.justify-between.border-b,
+  .page-container .flex.flex-wrap.items-center.justify-between { align-items: stretch; }
+  .page-container .flex.items-center.justify-between.border-b { flex-wrap: wrap; gap: 10px; }
+  .page-container .flex.items-center.justify-between.border-b > * { min-width: 0; }
+  .page-container .rounded-xl.bg-slate-50.p-1 { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .page-container .rounded-xl.bg-slate-50.p-1::-webkit-scrollbar { display: none; }
+  .page-container .rounded-xl.bg-slate-50.p-1 > button { flex: 0 0 auto; white-space: nowrap; }
+  .page-container label.flex.h-9.w-52,
+  .page-container label.w-56 { width: 100%; min-width: 0; }
+  .page-container section > .border-b > .flex.items-center.gap-2,
+  .page-container section > .border-b > .flex.flex-wrap.items-center.gap-2 { width: 100%; flex-wrap: wrap; }
+  .page-container section > .border-b > .flex.items-center.gap-2 > label,
+  .page-container section > .border-b > .flex.flex-wrap.items-center.gap-2 > label { flex: 1 1 100%; width: 100%; }
+  .page-container section > .border-b > .flex.items-center.gap-2 > input,
+  .page-container section > .border-b > .flex.flex-wrap.items-center.gap-2 > input { min-width: 0; }
+  .page-container .overflow-x-auto { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+  .page-container .overflow-x-auto > table { max-width: none; }
+  .page-container .form-grid .col-span-2 { grid-column: auto; }
+  .page-container .flex.flex-wrap.items-end.justify-between { align-items: stretch; }
+  .page-container .flex.flex-wrap.items-end.justify-between > div { min-width: 0; }
+  .page-container .flex.flex-wrap.items-end.justify-between p { line-height: 1.7; }
+  .modal-backdrop { align-items: end; padding: 8px; }
+  .invoice-modal, .invoice-modal.max-w-3xl, .invoice-modal.max-w-4xl, .invoice-modal.max-w-5xl { width: 100%; max-width: 100%; max-height: calc(100dvh - 16px); margin: 0; padding: 18px 14px; border-radius: 18px 18px 12px 12px; }
+  .invoice-modal .table-wrap, .invoice-modal .overflow-x-auto { margin-left: -2px; margin-right: -2px; width: calc(100% + 4px); }
+  .invoice-modal .modal-header { gap: 10px; }
+  .invoice-modal .modal-header > div { min-width: 0; }
+  .invoice-modal .modal-header h2 { overflow-wrap: anywhere; }
+  .invoice-modal .modal-actions { position: sticky; bottom: -18px; z-index: 2; margin: 18px -14px -18px; padding: 12px 14px; background: rgba(255,255,255,.96); border-top: 1px solid var(--line-soft); }
+  .invoice-modal .modal-actions > button { min-width: 0; }
+  .app-toast { top: 10px; left: 10px; right: 10px; min-width: 0; max-width: none; font-size: 12px; }
+}
+
+@media (max-width: 420px) {
+  .page-container { padding-left: 10px; padding-right: 10px; }
+  .topbar { padding-left: 10px; padding-right: 10px; }
+  .topbar-actions { gap: 3px; }
+  .topbar-heading h1 { font-size: 14px; }
+  .topbar-heading span { max-width: 125px; }
+  .mobile-menu, .icon-button, .date-filter, .search-box { width: 37px; height: 37px; }
+  .mobile-menu svg, .icon-button svg, .date-filter svg, .search-box > svg { width: 19px; height: 19px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-card { min-height: 132px; padding: 12px 9px; }
+  .stat-card p { font-size: 10px; }
+  .stat-value strong { font-size: 16px; }
+  .panel { padding-left: 10px; padding-right: 10px; }
+  .quick-actions button { min-height: 58px; }
+}
