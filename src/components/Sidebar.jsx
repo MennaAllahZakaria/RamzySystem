@@ -39,7 +39,7 @@ function NavItem({ item, onSelect }) {
   const Icon = item.icon;
   return (
     <button type="button" className={`nav-item ${item.active ? "nav-item-active" : ""}`} onClick={() => onSelect(item.label)}>
-      <Icon size={19} strokeWidth={item.active ? 2.3 : 1.9} />
+      <span className="nav-icon"><Icon size={20} strokeWidth={item.active ? 2.4 : 2} /></span>
       <span>{item.label}</span>
       {item.badge && <span className="nav-badge">{item.badge}</span>}
     </button>
@@ -72,7 +72,7 @@ export default function Sidebar({ activePage, onSelect, user, onLogout }) {
 
       <div className="sidebar-bottom">
         <button type="button" className={`nav-item ${activePage === "الإعدادات" ? "nav-item-active" : ""}`} onClick={() => onSelect("الإعدادات")}>
-          <Settings size={19} /><span>الإعدادات</span>
+          <span className="nav-icon"><Settings size={20} /></span><span>الإعدادات</span>
         </button>
         <div className="help-card">
           <div className="help-icon"><ClipboardList size={18} /></div>
@@ -84,7 +84,7 @@ export default function Sidebar({ activePage, onSelect, user, onLogout }) {
           <div><strong>{user?.name || "المستخدم"}</strong><span>{user?.role || "مستخدم النظام"}</span></div>
           <span className="online-dot" />
         </div>
-        <button type="button" className="nav-item mt-3 !text-slate-400 hover:!text-[#df2431]" onClick={onLogout}><LogOut size={18} /><span>تسجيل الخروج</span></button>
+        <button type="button" className="nav-item mt-3 !text-slate-400 hover:!text-[#df2431]" onClick={onLogout}><span className="nav-icon"><LogOut size={19} /></span><span>تسجيل الخروج</span></button>
       </div>
     </aside>
   );

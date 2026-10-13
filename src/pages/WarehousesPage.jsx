@@ -268,6 +268,7 @@ export default function WarehousesPage() {
       </tbody></table>{!counts.length && !state.loading && <div className="p-10 text-center text-xs text-slate-400">لا توجد عمليات جرد محفوظة حتى الآن.</div>}</div>
     </section>
 
+    {dialog}
     {countMode && <div className="modal-backdrop" onMouseDown={() => { previewSequence.current += 1; setCountMode(""); }}>
       <form className="invoice-modal max-w-5xl" onSubmit={saveCount} onMouseDown={(event) => event.stopPropagation()}>
         <div className="modal-header"><div><span className="eyebrow">جرد المخزون</span><h2>{editingCount ? "تعديل مسودة الجرد" : countMode === "now" ? "جرد حالًا" : "جرد لفترة"}</h2><p className="mt-1 text-xs text-slate-500">الرصيد المتوقع محسوب من الرصيد الافتتاحي والحركات المسجلة حتى تاريخ الجرد؛ لا تغيّريه يدويًا.</p></div><button type="button" className="close-button" onClick={() => { previewSequence.current += 1; setCountMode(""); }}>×</button></div>
@@ -299,5 +300,5 @@ function Metric({ label, value, suffix }) {
   return <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><span className="text-xs text-slate-500">{label}</span><strong className="mt-3 block text-2xl text-slate-800">{formatMoney(value)} <small className="text-xs font-normal text-slate-400">{suffix}</small></strong></div>;
 }
 function SummaryMetric({ label, value, danger = false }) {
-  return <div className={`rounded-xl border p-3 ${danger ? "border-red-200 bg-red-50" : "border-slate-100 bg-slate-50"}`}><span className="block text-[11px] text-slate-500">{label}</span><strong className={`mt-1 block text-sm ${danger ? "text-red-700" : "text-slate-800"}`}>{value}</strong>{dialog}</div>;
+  return <div className={`rounded-xl border p-3 ${danger ? "border-red-200 bg-red-50" : "border-slate-100 bg-slate-50"}`}><span className="block text-[11px] text-slate-500">{label}</span><strong className={`mt-1 block text-sm ${danger ? "text-red-700" : "text-slate-800"}`}>{value}</strong></div>;
 }

@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { Edit3, Plus, RefreshCw, Trash2, UsersRound } from "lucide-react";
 import { deactivateEmployee, listEmployees } from "../api/employees"; import { deactivateWorker, listWorkers } from "../api/workers"; import EntityModal from "../components/EntityModal"; import { getPayrollSummary } from "../api/reports"; import { apiErrorMessage, formatMoney, unwrapData } from "../utils/pageHelpers";

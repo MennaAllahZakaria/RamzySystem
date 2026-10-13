@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- shared feedback hooks and UI intentionally live together. */
 import { useState } from "react";
 import { AlertTriangle, CheckCircle2, X } from "lucide-react";
 
