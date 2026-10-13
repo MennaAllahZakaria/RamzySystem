@@ -36,7 +36,8 @@ export default function InvoicePreviewModal({ invoice, onClose }) {
             const quantity = numberValue(item.quantity ?? item.qty) || 1;
             const unitPrice = numberValue(item.unitPrice ?? item.price);
             const lineTotal = numberValue(item.total ?? item.lineTotal) || quantity * unitPrice;
-            return <tr key={`${item.product?._id || item.productId || index}`}><td>{index + 1}</td><td><strong>{item.product?.name || item.productName || item.name || "صنف"}</strong>{item.itemType === "labor" && <small>مصنعية</small>}</td><td>{formatMoney(quantity)}</td><td>{formatMoney(unitPrice)} ج.م</td><td className="font-bold">{formatMoney(lineTotal)} ج.م</td></tr>;
+            const itemName = item.description || item.product?.name || item.productName || item.name || item.product?.description || "صنف";
+            return <tr key={`${item.product?._id || item.productId || index}`}><td>{index + 1}</td><td><strong>{itemName}</strong>{item.itemType === "labor" && <small>مصنعية</small>}</td><td>{formatMoney(quantity)}</td><td>{formatMoney(unitPrice)} ج.م</td><td className="font-bold">{formatMoney(lineTotal)} ج.م</td></tr>;
           }) : <tr><td colSpan="5" className="invoice-preview-empty"><Package2 size={22} />لا توجد تفاصيل أصناف متاحة للمعاينة</td></tr>}</tbody>
         </table>
       </div>
