@@ -90,3 +90,5 @@
   .sidebar-nav { min-height: 0; overflow-y: auto; scrollbar-width: thin; }
   .sidebar-bottom { flex: 0 0 auto; }
 }
+
+.app-toast { position: fixed; top: 24px; left: 24px; z-index: 40; display: flex; align-items: center; gap: 9px; min-width: 260px; max-width: min(420px, calc(100vw - 32px)); padding: 13px 15px; border-radius: 13px; background: #fff; border: 1px solid #d9efe6; color: #14785f; box-shadow: 0 16px 38px rgba(28,45,58,.16); font-size: 11px; font-weight: 700; direction: rtl; animation: toast-in .2s ease-out; }.app-toast button { margin-right: auto; color: #8b989d; background: transparent; }.app-toast-error { border-color: #ffd7da; color: #b4232e; }.app-toast-warning { border-color: #ffe5b5; color: #a8650d; }@keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }

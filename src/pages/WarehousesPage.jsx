@@ -10,6 +10,7 @@ import {
   updateStockCount,
 } from "../api/warehouses";
 import { apiErrorMessage, formatDate, formatMoney } from "../utils/pageHelpers";
+import { useConfirm } from "../components/Feedback";
 
 const localDate = () => {
   const date = new Date();
@@ -54,6 +55,7 @@ const dateInputValue = (value) => {
 };
 
 export default function WarehousesPage() {
+  const { confirm, dialog } = useConfirm();
   const [warehouses, setWarehouses] = useState([]);
   const [alerts, setAlerts] = useState({ lowStock: [] });
   const [counts, setCounts] = useState([]);
@@ -195,7 +197,7 @@ export default function WarehousesPage() {
   const approveCount = async (count) => {
     const summary = itemSummary(count.items);
     const message = `سيتم اعتماد الجرد وتحديث رصيد المخزون. العجز: ${displayQuantity(summary.shortage)} وحدة في ${summary.shortageItems} صنف. لا يمكن تعديل الجرد بعد الاعتماد. هل تريدين المتابعة؟`;
-    if (!window.confirm(message)) return;
+    if (!await confirm(message, "تأكيد اعتماد الجرد")) return;
     setState((current) => ({ ...current, saving: true, error: "" }));
     try {
       await approveStockCount(count._id);
@@ -297,5 +299,5 @@ function Metric({ label, value, suffix }) {
   return <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><span className="text-xs text-slate-500">{label}</span><strong className="mt-3 block text-2xl text-slate-800">{formatMoney(value)} <small className="text-xs font-normal text-slate-400">{suffix}</small></strong></div>;
 }
 function SummaryMetric({ label, value, danger = false }) {
-  return <div className={`rounded-xl border p-3 ${danger ? "border-red-200 bg-red-50" : "border-slate-100 bg-slate-50"}`}><span className="block text-[11px] text-slate-500">{label}</span><strong className={`mt-1 block text-sm ${danger ? "text-red-700" : "text-slate-800"}`}>{value}</strong></div>;
+  return <div className={`rounded-xl border p-3 ${danger ? "border-red-200 bg-red-50" : "border-slate-100 bg-slate-50"}`}><span className="block text-[11px] text-slate-500">{label}</span><strong className={`mt-1 block text-sm ${danger ? "text-red-700" : "text-slate-800"}`}>{value}</strong>{dialog}</div>;
 }
