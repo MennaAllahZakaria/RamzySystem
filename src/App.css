@@ -3,7 +3,7 @@
 :root { --ink: #1b252b; --muted: #73808a; --line: #e9eef0; --surface: #fff; --canvas: #f7f9fa; --red: #df2431; --red-soft: #fff1f2; --green: #15866a; --green-soft: #e9f8f2; --blue: #2771b7; --blue-soft: #edf5ff; --amber: #be7614; --amber-soft: #fff6e7; --shadow: 0 16px 38px rgba(28, 45, 58, .055); }
 .app-shell { display: flex; direction: rtl; min-height: 100vh; background: var(--canvas); }
 .sidebar-wrap { width: 278px; flex: 0 0 278px; }
-.sidebar { direction: rtl; background: #fff; border-left: 1px solid var(--line); min-height: 100vh; display: flex; flex-direction: column; padding: 27px 20px 20px; position: sticky; top: 0; height: 100vh; }
+.sidebar { direction: rtl; background: #fff; border-left: 1px solid var(--line); min-height: 100vh; display: flex; flex-direction: column; padding: 27px 20px 20px; position: sticky; top: 0; height: 100vh; overflow-x: hidden; }
 .brand-block { display: flex; align-items: center; gap: 11px; padding: 0 6px 23px; border-bottom: 1px solid var(--line); }
 .brand-mark { width: 46px; height: 46px; border-radius: 13px; overflow: hidden; background: #fff; display: grid; place-items: center; border: 1px solid #f1dddd; }
 .brand-mark img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.32); }
@@ -87,7 +87,7 @@
 @media (min-width: 761px) {
   .sidebar-wrap { position: sticky; top: 0; height: 100vh; align-self: flex-start; }
   .sidebar { position: relative; height: 100vh; min-height: 100vh; overflow: hidden; }
-  .sidebar-nav { min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+  .sidebar-nav { min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; }
   .sidebar-bottom { flex: 0 0 auto; }
 }
 
