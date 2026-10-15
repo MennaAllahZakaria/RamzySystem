@@ -1,7 +1,7 @@
 import { CalendarDays, CreditCard, Package2, UserRound, X } from "lucide-react";
 import { formatDate, formatMoney, numberValue } from "../utils/pageHelpers";
 
-const typeLabel = { sale: "فاتورة بيع", purchase: "فاتورة توريد", internal: "فاتورة للمكتب" };
+const typeLabel = { sale: "فاتورة بيع", maintenance: "فاتورة صيانة", purchase: "فاتورة توريد", internal: "فاتورة للمكتب" };
 const statusLabel = { paid: "مدفوعة", partially_paid: "مدفوعة جزئيًا", credit: "آجلة", overdue: "متأخرة", draft: "مسودة", issued: "صادرة" };
 
 export default function InvoicePreviewModal({ invoice, onClose }) {
