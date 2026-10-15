@@ -66,7 +66,7 @@ export default function SellerWorkspacePage({ user, onLogout }) {
 
     <main className="page-container !pt-7">
       <section className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div><span className="eyebrow">إصدار الفواتير</span><h1 className="!m-0 !text-[25px]">فواتير البيع والصيانة</h1><p className="mt-2 text-xs text-slate-500">أضيفي فاتورة، حددي حالة السداد، ثم عاينيها واطبعيها.</p></div>
+        <div><span className="eyebrow">إصدار الفواتير</span><h1 className="!m-0 !text-[25px]">فواتير البيع والصيانة</h1><p className="mt-2 text-xs text-slate-500">أضيفي فاتورة، أدخلي المبلغ المحصّل، ثم عاينيها واطبعيها.</p></div>
         <button type="button" onClick={() => setInvoiceModalOpen(true)} className="inline-flex items-center gap-2 rounded-xl bg-[#df2431] px-5 py-3 text-xs font-bold text-white shadow-lg shadow-red-200"><FilePlus2 size={17} /> فاتورة جديدة</button>
       </section>
 
