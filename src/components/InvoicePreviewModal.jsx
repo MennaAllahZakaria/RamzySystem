@@ -4,7 +4,7 @@ import { formatDate, formatMoney, numberValue } from "../utils/pageHelpers";
 const typeLabel = { sale: "فاتورة بيع", maintenance: "فاتورة صيانة", purchase: "فاتورة توريد", internal: "فاتورة للمكتب" };
 const statusLabel = { paid: "مدفوعة", partially_paid: "مدفوعة جزئيًا", credit: "آجلة", overdue: "متأخرة", draft: "مسودة", issued: "صادرة" };
 
-export default function InvoicePreviewModal({ invoice, onClose }) {
+export default function InvoicePreviewModal({ invoice, onClose, showCreator = false }) {
   if (!invoice) return null;
   const items = invoice.items || [];
   const total = numberValue(invoice.total);
@@ -28,6 +28,7 @@ export default function InvoicePreviewModal({ invoice, onClose }) {
         <div><CalendarDays size={16} /><span>التاريخ</span><strong>{formatDate(invoice.issueDate || invoice.date)}</strong></div>
         <div><CreditCard size={16} /><span>الحالة</span><strong>{statusLabel[invoice.paymentStatus] || statusLabel[invoice.status] || "—"}</strong></div>
       </div>
+      {showCreator && <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">أنشأها: <strong className="text-slate-800">{invoice.createdByName || invoice.createdBy?.name || invoice.createdBy?.username || "غير محدد"}</strong></div>}
 
       <div className="invoice-preview-table-wrap">
         <table className="invoice-preview-table">
