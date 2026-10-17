@@ -1,6 +1,7 @@
 import { apiClient } from "./client";
 export const getCustomerBalances = (query) => apiClient.get("/party-balances/customers", query);
 export const getSupplierBalances = (query) => apiClient.get("/party-balances/suppliers", query);
+export const getPartyBalanceTotals = (query) => apiClient.get("/party-balances/totals", query);
 export const exportCustomerBalances = (query) => apiClient.download("/party-balances/customers/export", query);
 export const exportSupplierBalances = (query) => apiClient.download("/party-balances/suppliers/export", query);
 export const getCustomerStatement = (id, query) => apiClient.get(`/party-balances/customers/${id}/statement`, query);
