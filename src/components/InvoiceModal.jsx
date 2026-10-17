@@ -11,7 +11,21 @@ const isSaleType = (type) => ["sale", "maintenance"].includes(type);
 const newNumber = (type) => `${isSaleType(type) ? "INV" : "PUR"}-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
 export default function InvoiceModal({ onClose, onSaved, initialType = "sale", invoice = null, sellerMode = false }) {
   const [type, setType] = useState(invoice?.invoiceType || initialType); const [parties, setParties] = useState([]); const [products, setProducts] = useState([]); const [workers, setWorkers] = useState([]); const [partySearch, setPartySearch] = useState(invoice?.party?.name || ""); const [search, setSearch] = useState(""); const [form, setForm] = useState({ invoiceNumber: invoice?.invoiceNumber || newNumber(initialType), party: invoice?.party?._id || invoice?.party || "", dueDate: invoice?.dueDate ? String(invoice.dueDate).slice(0, 10) : "", discount: numberValue(invoice?.invoiceDiscount), paidAmount: numberValue(invoice?.paidAmount), paymentMethod: invoice?.paymentMethod || "cash", notes: invoice?.notes || "" }); const [items, setItems] = useState((invoice?.items || []).map((item) => ({ product: item.product?._id || item.product, description: item.description, itemType: item.itemType || "product", quantity: numberValue(item.quantity), unitPrice: numberValue(item.unitPrice), unitCost: numberValue(item.unitCost), serialNumber: item.serialNumber || "", workerShares: (item.workerShares || []).map((share) => ({ worker: share.worker?._id || share.worker, percentage: numberValue(share.percentage) })) }))); const [state, setState] = useState({ loading: true, saving: false, error: "" });
-  useEffect(() => { Promise.all([isSaleType(type) ? listCustomers({ limit: 100 }) : type === "purchase" ? listSuppliers({ limit: 100 }) : Promise.resolve({ data: [] }), listWorkers({ limit: 100 })]).then(([p, workersResult]) => { setParties(unwrapData(p)); setWorkers(unwrapData(workersResult)); setState((s) => ({ ...s, loading: false })); }).catch((e) => setState({ loading: false, saving: false, error: apiErrorMessage(e) })); }, [type]);
+  useEffect(() => { listWorkers({ limit: 100 }).then((workersResult) => { setWorkers(unwrapData(workersResult)); setState((s) => ({ ...s, loading: false })); }).catch((e) => setState({ loading: false, saving: false, error: apiErrorMessage(e) })); }, [type]);
+  useEffect(() => {
+    let active = true;
+    const timer = window.setTimeout(() => {
+      const request = isSaleType(type)
+        ? listCustomers({ search: partySearch.trim() || undefined, limit: 100 })
+        : type === "purchase"
+          ? listSuppliers({ search: partySearch.trim() || undefined, limit: 100 })
+          : Promise.resolve({ data: [] });
+      request
+        .then((response) => { if (active) setParties(unwrapData(response)); })
+        .catch((error) => { if (active) setState((current) => ({ ...current, error: apiErrorMessage(error) })); });
+    }, partySearch.trim() ? 250 : 0);
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [partySearch, type]);
   useEffect(() => {
     let active = true;
     const timer = window.setTimeout(() => {
