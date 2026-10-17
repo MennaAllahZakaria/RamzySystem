@@ -19,7 +19,22 @@ export default function TablePagination({ page, pages, total, limit = 100, onPag
         >
           <ChevronRight size={15} /> السابق
         </button>
-        <span className="min-w-24 text-center">صفحة {safePage} من {safePages}</span>
+        <label className="inline-flex items-center gap-2 whitespace-nowrap">
+          صفحة
+          <input
+            type="number"
+            min="1"
+            max={safePages}
+            value={safePage}
+            aria-label="رقم الصفحة"
+            onChange={(event) => {
+              const nextPage = Number(event.target.value);
+              if (Number.isInteger(nextPage) && nextPage >= 1 && nextPage <= safePages) onPageChange(nextPage);
+            }}
+            className="h-9 w-16 rounded-lg border border-slate-200 bg-white px-2 text-center"
+          />
+          من {safePages}
+        </label>
         <button
           type="button"
           onClick={() => onPageChange(safePage + 1)}
