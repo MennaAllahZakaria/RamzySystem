@@ -306,3 +306,4 @@ function Metric({ label, value, suffix }) {
 function SummaryMetric({ label, value, danger = false }) {
   return <div className={`rounded-xl border p-3 ${danger ? "border-red-200 bg-red-50" : "border-slate-100 bg-slate-50"}`}><span className="block text-[11px] text-slate-500">{label}</span><strong className={`mt-1 block text-sm ${danger ? "text-red-700" : "text-slate-800"}`}>{value}</strong></div>;
 }
+
