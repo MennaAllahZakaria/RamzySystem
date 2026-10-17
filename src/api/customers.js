@@ -3,5 +3,6 @@ export const listCustomers = (query) => apiClient.get("/customers", query);
 export const getCustomer = (id) => apiClient.get(`/customers/${id}`);
 export const createCustomer = (payload) => apiClient.post("/customers", payload);
 export const createCustomerSupplier = (payload) => apiClient.post("/parties/both", payload);
+export const listCustomerSuppliers = (query) => apiClient.get("/parties/both", query);
 export const updateCustomer = (id, payload) => apiClient.patch(`/customers/${id}`, payload);
 export const deleteCustomer = (id) => apiClient.delete(`/customers/${id}`);
