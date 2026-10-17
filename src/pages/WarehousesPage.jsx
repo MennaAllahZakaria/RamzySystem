@@ -58,6 +58,7 @@ export default function WarehousesPage() {
   const { confirm, dialog } = useConfirm();
   const [warehouses, setWarehouses] = useState([]);
   const [alerts, setAlerts] = useState({ lowStock: [] });
+  const [stockAlertFilter, setStockAlertFilter] = useState("out");
   const [counts, setCounts] = useState([]);
   const [products, setProducts] = useState([]);
   const [counted, setCounted] = useState({});
@@ -211,6 +212,9 @@ export default function WarehousesPage() {
   };
 
   const totalUnits = warehouses.reduce((sum, entry) => sum + number(entry.units), 0);
+  const stockAlertRows = (alerts.lowStock || []).filter((item) => (number(item.units) <= 0) === (stockAlertFilter === "out"));
+  const outOfStockCount = (alerts.lowStock || []).filter((item) => number(item.units) <= 0).length;
+  const runningLowCount = (alerts.lowStock || []).filter((item) => number(item.units) > 0).length;
   const shop = warehouses[0]?.warehouse || warehouses[0];
   const currentSummary = itemSummary(products.map((item) => ({ ...item, countedQuantity: counted[productIdOf(item)] ?? item.countedQuantity ?? item.expectedQuantity })));
 
@@ -232,14 +236,14 @@ export default function WarehousesPage() {
     <div className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-3">
       <Metric label="موقع المخزون" value={shop ? 1 : 0} suffix="المحل" />
       <Metric label="إجمالي الوحدات المتاحة" value={totalUnits} suffix="وحدة" />
-      <Metric label="أصناف قاربت على النفاد" value={(alerts.lowStock || []).length} suffix="صنف" />
+      <Metric label={stockAlertFilter === "out" ? "أصناف نفد مخزونها" : "أصناف قاربت على النفاد"} value={stockAlertFilter === "out" ? outOfStockCount : runningLowCount} suffix="صنف" />
     </div>
 
     <section className="mb-6 rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-100 p-5"><h2 className="!m-0 !text-[17px]">أصناف منخفضة أو نافدة</h2><p className="mt-1 text-xs text-slate-500">تُجمع الكمية الفعلية لكل صنف، بما فيها الكمية الافتتاحية المتبقية، وتُقارن بحد إعادة الطلب.</p></div>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-5"><div><h2 className="!m-0 !text-[17px]">متابعة حالة المخزون</h2><p className="mt-1 text-xs text-slate-500">اختاري حالة واحدة لعرضها. يُقارن الرصيد الفعلي، بما فيه الافتتاحي، بحد إعادة الطلب المحدد لكل صنف.</p></div><div className="flex rounded-xl bg-slate-50 p-1"><button type="button" onClick={() => setStockAlertFilter("out")} className={`rounded-lg px-4 py-2 text-[11px] ${stockAlertFilter === "out" ? "bg-white font-bold text-[#df2431] shadow-sm" : "text-slate-500"}`}>نفد المخزون ({outOfStockCount})</button><button type="button" onClick={() => setStockAlertFilter("low")} className={`rounded-lg px-4 py-2 text-[11px] ${stockAlertFilter === "low" ? "bg-white font-bold text-[#df2431] shadow-sm" : "text-slate-500"}`}>قارب على النفاد ({runningLowCount})</button></div></div>
       <div className="overflow-x-auto"><table className="w-full min-w-[600px]"><thead><tr><th>المنتج</th><th>الرصيد الحالي</th><th>حد إعادة الطلب</th><th>الحالة</th></tr></thead><tbody>
-        {(alerts.lowStock || []).map((item, index) => <tr key={`${item.name}-${item.sku || item.serialNumbers?.[0] || index}`}><td className="font-semibold">{item.name}{item.sku && <div className="text-[11px] font-normal text-slate-500">SKU: {item.sku}</div>}</td><td className="font-bold text-red-600">{displayQuantity(item.units)}</td><td>{displayQuantity(item.reorderLevel)}</td><td><span className="status-pill status-due">{number(item.units) <= 0 ? "نفد المخزون" : "قارب على النفاد"}</span></td></tr>)}
-      </tbody></table>{!(alerts.lowStock || []).length && <div className="p-12 text-center text-xs text-slate-400">لا توجد تنبيهات مخزون.</div>}</div>
+        {stockAlertRows.map((item, index) => <tr key={`${item.name}-${item.sku || item.serialNumbers?.[0] || index}`}><td className="font-semibold">{item.name}{item.sku && <div className="text-[11px] font-normal text-slate-500">SKU: {item.sku}</div>}</td><td className="font-bold text-red-600">{displayQuantity(item.units)}</td><td>{displayQuantity(item.reorderLevel)}</td><td><span className="status-pill status-due">{stockAlertFilter === "out" ? "نفد المخزون" : "قارب على النفاد"}</span></td></tr>)}
+      </tbody></table>{!stockAlertRows.length && <div className="p-12 text-center text-xs text-slate-400">لا توجد أصناف ضمن الحالة المختارة.</div>}</div>
     </section>
 
     <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
